@@ -1,37 +1,57 @@
-let CLUSTER_PREVENTION_THRESHOLD = 5;
-let REPLACEMENT_CHANCE = 0.2;
+function fillInTheBlanksMain() {
+    if (window.fillInTheBlanksState === "complete") {
+        // Everything's been shown and we don't have any sort of built-in "go back to normal" functionality, so bail
+        return;
+    }
 
-let tagLookup = {
-    'JJ': 'Adjective',
-    'NN': 'Noun',
-    'NNP': 'Proper Noun',
-    'NNS': 'Noun (plural)',
-    'RB': 'Adverb',
-    'VB': 'Verb',
-    'VBD': 'Verb (past tense)',
-    'VBG': 'Verb ending in &quot;ing&quot;'
-};
+    if (window.fillInTheBlanksState === "getinputs") {
+        // The user has (probably) filled in the inputs, and wants to see their results now.
+        window.fillInTheBlanksState = "complete";
 
-let pTags = document.querySelectorAll('p:not([class])');
-pTags.forEach(async (pTag) => {
-    let newMarkup = "";
-    let clusterPrevention = Number.POSITIVE_INFINITY;
+        document.querySelectorAll('.fill-in-the-blanks-text').forEach(tag => tag.style.filter = "none");
+        return;
+    }
 
-    const data = compendium.analyse(pTag.innerText, null, ['sentiment', 'negation', 'type']);
+    // This is the first time we've been run, so do all the setup on the page
+    window.fillInTheBlanksState = "getinputs";
 
-    data.forEach(sentence => {
-        sentence.tokens.forEach(token => {
-            clusterPrevention++;
+    let CLUSTER_PREVENTION_THRESHOLD = 5;
+    let REPLACEMENT_CHANCE = 0.2;
 
-            const tagName = tagLookup[token.pos];
-            if (tagName !== undefined && clusterPrevention > CLUSTER_PREVENTION_THRESHOLD && Math.random() < REPLACEMENT_CHANCE) {
-                clusterPrevention = 0;
-                newMarkup += `<input placeholder="${tagName}" style="text-align: center; border: none; border-bottom: 1px solid black;"/> `;
-            } else {
-                newMarkup += `${token.raw} `;
-            }
+    let tagLookup = {
+        'JJ': 'Adjective',
+        'NN': 'Noun',
+        'NNP': 'Proper Noun',
+        'NNS': 'Noun (plural)',
+        'RB': 'Adverb',
+        'VB': 'Verb',
+        'VBD': 'Verb (past tense)',
+        'VBG': 'Verb ending in &quot;ing&quot;'
+    };
+
+    let pTags = document.querySelectorAll('p:not([class])');
+    pTags.forEach(async (pTag) => {
+        let newMarkup = "";
+        let clusterPrevention = Number.POSITIVE_INFINITY;
+
+        const data = compendium.analyse(pTag.innerText, null, ['sentiment', 'negation', 'type']);
+
+        data.forEach(sentence => {
+            sentence.tokens.forEach(token => {
+                clusterPrevention++;
+
+                const tagName = tagLookup[token.pos];
+                if (tagName !== undefined && clusterPrevention > CLUSTER_PREVENTION_THRESHOLD && Math.random() < REPLACEMENT_CHANCE) {
+                    clusterPrevention = 0;
+                    newMarkup += `<input placeholder="${tagName}" class="fill-in-the-blanks-input" /> `;
+                } else {
+                    newMarkup += `<span class="fill-in-the-blanks-text">${token.raw} </span>`;
+                }
+            });
         });
-    });
 
-    pTag.innerHTML = newMarkup;
-});
+        pTag.innerHTML = newMarkup;
+    });
+}
+
+fillInTheBlanksMain();

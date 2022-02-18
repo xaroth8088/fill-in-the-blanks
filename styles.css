@@ -1,0 +1,9 @@
+.fill-in-the-blanks-text {
+    filter: blur(5px);
+}
+
+.fill-in-the-blanks-input {
+    text-align: center;
+    border: none;
+    border-bottom: 1px solid black;
+}
