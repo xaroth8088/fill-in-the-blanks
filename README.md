@@ -15,3 +15,5 @@ This Chrome extension is licensed under the MIT license, (c) 2022 Geoffrey Benso
 [compendium-js](https://github.com/Ulflander/compendium-js) used under the MIT license, (c) 2015 Ulflander.
 
 MAD LIBS is a trademark of PENGUIN GROUP (USA) INC.  This project is not affiliated with Penguin Group, and no association is intended to be conveyed.
+
+<a href="https://www.flaticon.com/free-icons/paper" title="paper icons">Paper icons created by Freepik - Flaticon</a>
